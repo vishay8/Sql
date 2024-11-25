@@ -1,0 +1,61 @@
+
+use schoolDB
+
+db.teacher.insertMany([
+    { name: "John Doe", subject: "Math", city: "Mumbai", date_of_joining: new Date("2010-05-20") },
+    { name: "Jane Smith", subject: "Physics", city: "Pune", date_of_joining: new Date("2011-06-15") },
+    { name: "Robert Brown", subject: "TOC", city: "Nashik", date_of_joining: new Date("2012-07-25") },
+    { name: "Emily Davis", subject: "Chemistry", city: "Mumbai", date_of_joining: new Date("2015-08-30") },
+    { name: "Michael Scott", subject: "TOC", city: "Satara", date_of_joining: new Date("2009-12-01") }
+])
+
+
+db.teacher.find()
+
+
+db.teacher.insertMany([
+    { name: "Alice Johnson", subject: "Biology", city: "Nagpur", date_of_joining: new Date("2013-03-15") },
+    { name: "Paul Adams", subject: "History", city: "Mumbai", date_of_joining: new Date("2014-11-22") },
+    { name: "Lisa Wilson", subject: "Math", city: "Pune", date_of_joining: new Date("2010-09-10") },
+    { name: "James Lee", subject: "TOC", city: "Kolhapur", date_of_joining: new Date("2018-01-05") },
+    { name: "Sophia Moore", subject: "Geography", city: "Nashik", date_of_joining: new Date("2019-05-29") }
+])
+
+
+db.teacher.find().pretty()
+
+
+db.teacher.findOne()
+
+
+db.teacher.find({ subject: "TOC" })
+
+
+db.teacher.find({ date_of_joining: { $gt: new Date("2011-06-23") } })
+
+
+db.teacher.updateOne(
+    { name: "Jane Smith" },
+    { $set: { city: "Ahmedabad" } }
+)
+
+
+db.teacher.find({ name: "Jane Smith" })
+
+
+db.teacher.deleteOne({ city: "Satara" })
+
+
+db.teacher.find({ city: "Satara" })
+
+
+db.teacher.deleteMany({})
+
+
+db.teacher.find()
+
+
+db.teacher.drop()
+
+
+show collections
