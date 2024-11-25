@@ -1,0 +1,72 @@
+-- Step 1: Create the Employee table and insert sample data
+CREATE TABLE Employee (
+    employeeno INT PRIMARY KEY,
+    employeename VARCHAR2(50),
+    join_date DATE,
+    designation VARCHAR2(50),
+    salary NUMBER(10, 2)
+);
+
+-- Insert sample data into the Employee table
+INSERT INTO Employee VALUES (1, 'Alice', TO_DATE('2020-01-10', 'YYYY-MM-DD'), 'Manager', 90000);
+INSERT INTO Employee VALUES (2, 'Bob', TO_DATE('2019-03-15', 'YYYY-MM-DD'), 'Engineer', 85000);
+INSERT INTO Employee VALUES (3, 'Charlie', TO_DATE('2021-06-20', 'YYYY-MM-DD'), 'Technician', 70000);
+INSERT INTO Employee VALUES (4, 'David', TO_DATE('2018-12-05', 'YYYY-MM-DD'), 'Analyst', 95000);
+INSERT INTO Employee VALUES (5, 'Eve', TO_DATE('2022-04-18', 'YYYY-MM-DD'), 'Developer', 65000);
+INSERT INTO Employee VALUES (6, 'Frank', TO_DATE('2017-09-25', 'YYYY-MM-DD'), 'CEO', 120000);
+
+COMMIT;
+-- Step 2: Using Implicit Cursor to display the top 5 highest paid employees
+BEGIN
+    -- Implicit cursor using FOR loop to select top 5 highest paid employees
+    FOR record IN (
+        SELECT employeeno, employeename, salary
+        FROM Employee
+        ORDER BY salary DESC
+        FETCH FIRST 5 ROWS ONLY
+    ) LOOP
+        -- Output employee details
+        DBMS_OUTPUT.PUT_LINE('Employee No: ' || record.employeeno ||
+                             ', Name: ' || record.employeename ||
+                             ', Salary: ' || record.salary);
+    END LOOP;
+END;
+/
+
+
+
+-- Step 3: Using Explicit Cursor to display the top 5 highest paid employees
+DECLARE
+    -- Declare the cursor for fetching top 5 highest paid employees
+    CURSOR top_paid_employees IS
+        SELECT employeeno, employeename, salary
+        FROM Employee
+        ORDER BY salary DESC
+        FETCH FIRST 5 ROWS ONLY;
+        
+    -- Variables to store cursor data
+    v_employeeno Employee.employeeno%TYPE;
+    v_employeename Employee.employeename%TYPE;
+    v_salary Employee.salary%TYPE;
+BEGIN
+    -- Open the cursor
+    OPEN top_paid_employees;
+
+    -- Loop through the cursor
+    LOOP
+        -- Fetch the data into variables
+        FETCH top_paid_employees INTO v_employeeno, v_employeename, v_salary;
+
+        -- Exit the loop if no more rows
+        EXIT WHEN top_paid_employees%NOTFOUND;
+
+        -- Display the fetched employee details
+        DBMS_OUTPUT.PUT_LINE('Employee No: ' || v_employeeno ||
+                             ', Name: ' || v_employeename ||
+                             ', Salary: ' || v_salary);
+    END LOOP;
+
+    -- Close the cursor
+    CLOSE top_paid_employees;
+END;
+/
