@@ -1,0 +1,80 @@
+-- Step 1: Create the Employee table
+CREATE TABLE Employee (
+    employeeno NUMBER PRIMARY KEY, -- Changed INT to NUMBER for better consistency in Oracle
+    employeename VARCHAR2(50),
+    join_date DATE,
+    designation VARCHAR2(50),
+    salary NUMBER(10, 2)
+);
+
+-- Insert sample data into the Employee table
+INSERT INTO Employee VALUES (1, 'Alice', TO_DATE('2020-01-10', 'YYYY-MM-DD'), 'Manager', 90000);
+INSERT INTO Employee VALUES (2, 'Bob', TO_DATE('2019-03-15', 'YYYY-MM-DD'), 'Engineer', 85000);
+INSERT INTO Employee VALUES (3, 'Charlie', TO_DATE('2021-06-20', 'YYYY-MM-DD'), 'Technician', 70000);
+INSERT INTO Employee VALUES (4, 'David', TO_DATE('2018-12-05', 'YYYY-MM-DD'), 'Analyst', 95000);
+INSERT INTO Employee VALUES (5, 'Eve', TO_DATE('2022-04-18', 'YYYY-MM-DD'), 'Developer', 65000);
+INSERT INTO Employee VALUES (6, 'Frank', TO_DATE('2017-09-25', 'YYYY-MM-DD'), 'CEO', 120000);
+
+COMMIT;
+
+-- Step 2: Create the Employee_Audit table
+CREATE TABLE Employee_Audit (
+    audit_id NUMBER PRIMARY KEY,
+    employeeno NUMBER, -- Adjusted from INT to NUMBER to be consistent
+    employeename VARCHAR2(50),
+    designation VARCHAR2(50),
+    salary NUMBER(10, 2),
+    operation_type VARCHAR2(10), -- 'UPDATE' or 'DELETE'
+    audit_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Step 3: Create a sequence to generate unique audit IDs
+CREATE SEQUENCE Employee_Audit_SEQ START WITH 1 INCREMENT BY 1;
+
+-- Step 4: Create the trigger to track UPDATE and DELETE operations
+CREATE OR REPLACE TRIGGER Employee_Audit_Trigger
+BEFORE UPDATE OR DELETE ON Employee
+FOR EACH ROW
+DECLARE
+    v_audit_id NUMBER; -- Variable to hold the new audit ID
+BEGIN
+    -- Generate a unique audit ID using the sequence
+    SELECT Employee_Audit_SEQ.NEXTVAL INTO v_audit_id FROM dual;
+    
+    -- Insert the old values into the Employee_Audit table
+    INSERT INTO Employee_Audit (
+        audit_id,
+        employeeno,
+        employeename,
+        designation,
+        salary,
+        operation_type,
+        audit_timestamp
+    )
+    VALUES (
+        v_audit_id,
+        :OLD.employeeno,
+        :OLD.employeename,
+        :OLD.designation,
+        :OLD.salary,
+        CASE
+            WHEN UPDATING THEN 'UPDATE'
+            WHEN DELETING THEN 'DELETE'
+        END,
+        CURRENT_TIMESTAMP
+    );
+END;
+/
+-- Step 5: Test the Trigger (Update and Delete operations)
+
+-- Test 1: Update an Employee Record
+UPDATE Employee
+SET salary = 95000
+WHERE employeeno = 1;
+
+-- Test 2: Delete an Employee Record
+DELETE FROM Employee
+WHERE employeeno = 2;
+
+-- Step 6: Check the Employee_Audit table to verify tracking of changes
+SELECT * FROM Employee_Audit;
