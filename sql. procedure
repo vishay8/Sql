@@ -1,0 +1,26 @@
+DELIMITER $$
+
+CREATE PROCEDURE GetTop5Employees()
+BEGIN
+    DECLARE emp_no INT;
+    DECLARE emp_name VARCHAR(50);
+    DECLARE emp_salary DECIMAL(10, 2);
+    
+    DECLARE cursor_top5 CURSOR FOR
+    SELECT employeeno, employeename, salary
+    FROM Employee
+    ORDER BY salary DESC
+    LIMIT 5;
+
+    OPEN cursor_top5;
+
+    FETCH cursor_top5 INTO emp_no, emp_name, emp_salary;
+    WHILE (@@FETCH_STATUS = 0) DO
+        SELECT CONCAT('Employee No: ', emp_no, ', Name: ', emp_name, ', Salary: ', emp_salary);
+        FETCH cursor_top5 INTO emp_no, emp_name, emp_salary;
+    END WHILE;
+
+    CLOSE cursor_top5;
+END $$
+
+DELIMITER ;
