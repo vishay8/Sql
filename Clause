@@ -1,0 +1,15 @@
+-- Example 1: Aggregating sales data by product
+SELECT product_name, SUM(sales_amount) AS total_sales
+FROM sales
+WHERE sales_date >= '2024-01-01'
+GROUP BY product_name
+HAVING SUM(sales_amount) > 1000
+ORDER BY total_sales DESC;
+
+-- Example 2: Filtering and grouping employee data by department
+SELECT department_id, COUNT(employee_id) AS num_employees
+FROM employees
+WHERE hire_date < '2020-01-01'
+GROUP BY department_id
+HAVING COUNT(employee_id) > 10
+ORDER BY num_employees DESC;
