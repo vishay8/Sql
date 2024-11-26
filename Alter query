@@ -1,0 +1,48 @@
+-- Add a new column
+ALTER TABLE table_name
+ADD column_name data_type;
+
+-- Add multiple columns
+ALTER TABLE table_name
+ADD column_name1 data_type1,
+    column_name2 data_type2;
+
+-- Modify an existing column
+ALTER TABLE table_name
+MODIFY COLUMN column_name new_data_type;
+
+-- Rename a column
+ALTER TABLE table_name
+RENAME COLUMN old_column_name TO new_column_name;
+
+-- Drop a column
+ALTER TABLE table_name
+DROP COLUMN column_name;
+
+-- Rename a table
+ALTER TABLE old_table_name
+RENAME TO new_table_name;
+
+-- Change the default value of a column
+ALTER TABLE table_name
+ALTER COLUMN column_name SET DEFAULT default_value;
+
+-- Drop the default value of a column
+ALTER TABLE table_name
+ALTER COLUMN column_name DROP DEFAULT;
+
+-- Add a primary key constraint
+ALTER TABLE table_name
+ADD CONSTRAINT constraint_name PRIMARY KEY (column_name);
+
+-- Add a foreign key constraint
+ALTER TABLE table_name
+ADD CONSTRAINT constraint_name FOREIGN KEY (column_name)
+REFERENCES referenced_table (referenced_column);
+
+-- Drop a constraint
+ALTER TABLE table_name
+DROP CONSTRAINT constraint_name;
+
+-- Rename a constraint (SQL Server only)
+EXEC sp_rename 'table_name.old_constraint_name', 'new_constraint_name', 'OBJECT';
